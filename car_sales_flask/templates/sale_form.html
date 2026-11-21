@@ -1,0 +1,16 @@
+{% extends "base.html" %}{% block content %}
+<h3 class="fw-bold mb-3">{{ title }}</h3>
+<form method="post" class="card p-4">
+<div class="row g-3">
+<div class="col-md-4"><label class="form-label">Tanggal</label><input class="form-control" type="date" name="tanggal" required value="{{ sale.tanggal if sale else '' }}"></div>
+<div class="col-md-4"><label class="form-label">Merek</label><select class="form-select" name="merek" required>{% for v in ['Toyota','Honda','Mitsubishi','Suzuki','Daihatsu','Hyundai','Nissan'] %}<option {% if sale and sale.merek==v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+<div class="col-md-4"><label class="form-label">Model</label><input class="form-control" name="model" required value="{{ sale.model if sale else '' }}" placeholder="Contoh: Avanza"></div>
+<div class="col-md-4"><label class="form-label">Tahun</label><input class="form-control" type="number" name="tahun" min="1990" max="2026" required value="{{ sale.tahun if sale else 2022 }}"></div>
+<div class="col-md-4"><label class="form-label">Harga Jual (Rupiah)</label><input class="form-control" type="number" name="harga_jual" min="1" required value="{{ sale.harga_jual if sale else '' }}"></div>
+<div class="col-md-4"><label class="form-label">Kilometer</label><input class="form-control" type="number" name="kilometer" min="0" required value="{{ sale.kilometer if sale else 10000 }}"></div>
+<div class="col-md-4"><label class="form-label">Transmisi</label><select class="form-select" name="transmisi"><option>Manual</option><option {% if sale and sale.transmisi=='Automatic' %}selected{% endif %}>Automatic</option></select></div>
+<div class="col-md-4"><label class="form-label">Bahan Bakar</label><select class="form-select" name="bahan_bakar">{% for v in ['Bensin','Diesel','Hybrid'] %}<option {% if sale and sale.bahan_bakar==v %}selected{% endif %}>{{ v }}</option>{% endfor %}</select></div>
+<div class="col-md-4"><label class="form-label">Kapasitas Mesin (CC)</label><input class="form-control" type="number" name="kapasitas_mesin" min="500" required value="{{ sale.kapasitas_mesin if sale else 1500 }}"></div>
+<div class="col-md-4"><label class="form-label">Kota</label><input class="form-control" name="kota" required value="{{ sale.kota if sale else 'Cirebon' }}"></div>
+</div><div class="mt-4"><button class="btn btn-primary">Simpan</button> <a class="btn btn-light" href="{{ url_for('sales') }}">Batal</a></div>
+</form>{% endblock %}

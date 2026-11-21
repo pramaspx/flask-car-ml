@@ -1,0 +1,30 @@
+{% extends "base.html" %}{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3"><div><h3 class="fw-bold mb-1">Dashboard Penjualan Mobil</h3><p class="text-secondary mb-0">Ringkasan transaksi dan analisis data.</p></div><a class="btn btn-primary" href="{{ url_for('add_sale') }}">+ Tambah Penjualan</a></div>
+<div class="row g-3 mb-4">
+<div class="col-md-4"><div class="card p-3"><div class="text-secondary">Total Transaksi</div><div class="metric">{{ "{:,}".format(total).replace(",",".") }}</div></div></div>
+<div class="col-md-4"><div class="card p-3"><div class="text-secondary">Total Nilai Penjualan</div><div class="metric">Rp {{ "{:,.0f}".format(revenue).replace(",",".") }}</div></div></div>
+<div class="col-md-4"><div class="card p-3"><div class="text-secondary">Rata-rata Harga Mobil</div><div class="metric">Rp {{ "{:,.0f}".format(avg).replace(",",".") }}</div></div></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-6"><div class="card p-3 chart-box"><h5>Bar Chart - Penjualan per Merek</h5><canvas id="barChart"></canvas></div></div>
+<div class="col-lg-6"><div class="card p-3 chart-box"><h5>Pie Chart - Komposisi Bahan Bakar</h5><canvas id="pieChart"></canvas></div></div>
+<div class="col-lg-6"><div class="card p-3 chart-box"><h5>Line Chart - Transaksi per Bulan</h5><canvas id="lineChart"></canvas></div></div>
+<div class="col-lg-6"><div class="card p-3 chart-box"><h5>Histogram - Distribusi Harga Jual</h5><canvas id="histChart"></canvas></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+const brandLabels={{ brand_labels|tojson }}, brandValues={{ brand_values|tojson }};
+const fuelLabels={{ fuel_labels|tojson }}, fuelValues={{ fuel_values|tojson }};
+const monthLabels={{ month_labels|tojson }}, monthValues={{ month_values|tojson }};
+const prices={{ prices|tojson }};
+new Chart(document.getElementById('barChart'),{type:'bar',data:{labels:brandLabels,datasets:[{label:'Jumlah transaksi',data:brandValues,backgroundColor:'#4263eb'}]},options:{responsive:true,plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('pieChart'),{type:'pie',data:{labels:fuelLabels,datasets:[{data:fuelValues,backgroundColor:['#4263eb','#20c997','#ff922b','#9775fa']}]},options:{responsive:true}});
+new Chart(document.getElementById('lineChart'),{type:'line',data:{labels:monthLabels,datasets:[{label:'Jumlah transaksi',data:monthValues,borderColor:'#12b886',backgroundColor:'#12b88633',fill:true,tension:.25}]},options:{responsive:true}});
+const min=Math.min(...prices), max=Math.max(...prices), bins=8, width=(max-min)/bins || 1;
+const counts=Array(bins).fill(0); prices.forEach(p=>{let i=Math.min(bins-1,Math.floor((p-min)/width));counts[i]++});
+const labels=counts.map((_,i)=>'Rp '+Math.round((min+i*width)/1000000)+'–'+Math.round((min+(i+1)*width)/1000000)+' jt');
+new Chart(document.getElementById('histChart'),{type:'bar',data:{labels,datasets:[{label:'Jumlah mobil',data:counts,backgroundColor:'#845ef7'}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{x:{title:{display:true,text:'Rentang harga'}},y:{title:{display:true,text:'Frekuensi'}}}}});
+</script>
+{% endblock %}

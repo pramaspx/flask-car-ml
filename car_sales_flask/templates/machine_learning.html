@@ -1,0 +1,19 @@
+{% extends "base.html" %}{% block content %}
+<h3 class="fw-bold">Machine Learning - Prediksi Harga Mobil</h3>
+<p class="text-secondary">Algoritma Random Forest Regression menggunakan data transaksi yang tersimpan di database.</p>
+<div class="card p-4 mb-4"><h5>1. Latih Model</h5><p>Model dilatih dari data historis. Sisihkan 20% data untuk evaluasi.</p>
+<form method="post"><input type="hidden" name="action" value="train"><button class="btn btn-primary">Latih Model Sekarang</button></form>
+{% if metrics %}<hr><div class="row"><div class="col-md-4"><b>Jumlah data:</b> {{ metrics.trained }}</div><div class="col-md-4"><b>MAE:</b> Rp {{ "{:,.0f}".format(metrics.mae).replace(",",".") }}</div><div class="col-md-4"><b>R²:</b> {{ "%.3f"|format(metrics.r2) }}</div></div>{% endif %}
+{% if model_exists %}<p class="text-success mt-2 mb-0">Model tersedia dan siap digunakan.</p>{% endif %}</div>
+<div class="card p-4"><h5>2. Prediksi Harga Jual</h5><form method="post" class="row g-3">
+<input type="hidden" name="action" value="predict">
+<div class="col-md-4"><label class="form-label">Merek</label><select class="form-select" name="merek">{% for v in ['Toyota','Honda','Mitsubishi','Suzuki','Daihatsu','Hyundai','Nissan'] %}<option>{{ v }}</option>{% endfor %}</select></div>
+<div class="col-md-4"><label class="form-label">Tahun</label><input class="form-control" name="tahun" type="number" value="2022" min="1990" max="2026"></div>
+<div class="col-md-4"><label class="form-label">Kilometer</label><input class="form-control" name="kilometer" type="number" value="30000" min="0"></div>
+<div class="col-md-4"><label class="form-label">Transmisi</label><select class="form-select" name="transmisi"><option>Manual</option><option>Automatic</option></select></div>
+<div class="col-md-4"><label class="form-label">Bahan Bakar</label><select class="form-select" name="bahan_bakar"><option>Bensin</option><option>Diesel</option><option>Hybrid</option></select></div>
+<div class="col-md-4"><label class="form-label">Kapasitas Mesin (CC)</label><input class="form-control" name="kapasitas_mesin" type="number" value="1500" min="500"></div>
+<div class="col-12"><button class="btn btn-success">Prediksi Harga</button></div></form>
+{% if prediction is not none %}<div class="alert alert-success mt-3 mb-0"><div>Estimasi harga jual</div><div class="fs-3 fw-bold">Rp {{ "{:,.0f}".format(prediction).replace(",",".") }}</div><small>Estimasi berdasarkan pola data simulasi dan bukan penawaran harga pasar.</small></div>{% endif %}
+</div>
+{% endblock %}
